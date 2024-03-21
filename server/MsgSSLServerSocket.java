@@ -8,7 +8,7 @@ import javax.net.ssl.*;
 
 public class MsgSSLServerSocket {
 	
-	
+
 	/**
 	 * @param args
 	 * @throws IOException
@@ -16,7 +16,9 @@ public class MsgSSLServerSocket {
 	 */
 	public static void main(String[] args) throws IOException, InterruptedException {
 
-	try {		
+		String correcUsername = "practica";
+		String correctPassword = "practica";
+	try {
 		SSLServerSocketFactory factory = (SSLServerSocketFactory) SSLServerSocketFactory.getDefault();
 		SSLServerSocket serverSocket = (SSLServerSocket) factory.createServerSocket(3343);
 		
@@ -28,15 +30,16 @@ public class MsgSSLServerSocket {
 			
 			// open BufferedReader for reading data from client
 			BufferedReader input = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-			String msg = input.readLine();
+			String username = input.readLine();
+			String password = input.readLine();
 
 			// open PrintWriter for writing data to client
 			PrintWriter output = new PrintWriter(new OutputStreamWriter(socket.getOutputStream()));
 
-			if (msg.equals("Hola")) {
+			if (username.equals(correcUsername) && password.equals(correctPassword)) {
 				output.println("Welcome to the Server");
 			} else {
-				output.println("Incorrect message.");
+				output.println("Incorrect credentials.");
 			}
 
 			output.close();
