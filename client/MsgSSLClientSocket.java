@@ -18,6 +18,7 @@ public class MsgSSLClientSocket {
 
 			SSLSocketFactory factory = (SSLSocketFactory) SSLSocketFactory.getDefault();
 			SSLSocket socket = (SSLSocket) factory.createSocket("localhost", 3343);
+			//SSLSocket socket = (SSLSocket) factory.createSocket("25.55.184.58", 3343);
 			
 			// create BufferedReader for reading server response
 			BufferedReader input = new BufferedReader(new InputStreamReader(socket.getInputStream()));
