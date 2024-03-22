@@ -10,6 +10,8 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 
 public class MsgSSLClientSocket {
 	
@@ -21,8 +23,8 @@ public class MsgSSLClientSocket {
 		try {
 			
 			SSLSocketFactory factory = (SSLSocketFactory) SSLSocketFactory.getDefault();
-			//SSLSocket socket = (SSLSocket) factory.createSocket("localhost", 3343);
-			SSLSocket socket = (SSLSocket) factory.createSocket("192.168.100.30", 3343);
+			SSLSocket socket = (SSLSocket) factory.createSocket("localhost", 3343);
+			//SSLSocket socket = (SSLSocket) factory.createSocket("192.168.100.30", 3343);
 			
 			// create BufferedReader for reading server response
 			BufferedReader input = new BufferedReader(new InputStreamReader(socket.getInputStream()));
@@ -48,33 +50,45 @@ public class MsgSSLClientSocket {
 			
 			// Convertimos el valor del arreglo de caracteres a String
 			String pass = new String(passwordField.getPassword());
-            
 
-			// send user name to server
+			// Convert the password to a SHA-256 hash
+			try {
+			MessageDigest digest = MessageDigest.getInstance("SHA-256");
+			byte[] hashBytes = digest.digest(pass.getBytes());
+			
+			StringBuilder hashBuilder = new StringBuilder();
+			for (byte b : hashBytes) {
+				hashBuilder.append(String.format("%02x", b));
+			}
+			pass = hashBuilder.toString();
+			} catch (NoSuchAlgorithmException e) {
+				e.printStackTrace();
+			}
+			
 			output.println(user);
 			output.println(pass);
 			output.println(message);
 			output.flush();
 
-			// read response from server
+			
 			String response = input.readLine();
 
-			// display response to user
+			
 			JOptionPane.showMessageDialog(null, response);
 
-			// clean up streams and Socket
+			
 			output.close();
 			input.close();
 			socket.close();
 
-		} // end try
+		} 
 
-		// handle exception communicating with server
+
 		catch (IOException ioException) {
 			ioException.printStackTrace();
 		}
 
-		// exit application
+		
 		finally {
 			System.exit(0);
 		}
