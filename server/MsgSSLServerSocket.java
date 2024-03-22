@@ -7,8 +7,6 @@ import java.io.PrintWriter;
 import javax.net.ssl.*;
 
 public class MsgSSLServerSocket {
-	
-
 	/**
 	 * @param args
 	 * @throws IOException
