@@ -42,10 +42,10 @@ public class MsgSSLClientSocket {
 			panel.add(label);
 
 			panel.add(passwordField);
-
-			// Mostramos el cuadro de diálogo personalizado
-			int option = JOptionPane.showConfirmDialog(null, panel, "Password Input", JOptionPane.OK_CANCEL_OPTION);
-
+			
+			JOptionPane.showConfirmDialog(null, panel, "Password Input", JOptionPane.OK_CANCEL_OPTION);
+			String message = JOptionPane.showInputDialog(null, "Enter a message:");
+			
 			// Convertimos el valor del arreglo de caracteres a String
 			String pass = new String(passwordField.getPassword());
             
@@ -53,6 +53,7 @@ public class MsgSSLClientSocket {
 			// send user name to server
 			output.println(user);
 			output.println(pass);
+			output.println(message);
 			output.flush();
 
 			// read response from server
