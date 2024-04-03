@@ -19,7 +19,7 @@ public class MsgSSLServerSocket {
 
 	 // JDBC driver name and database URL 
 	 static final String JDBC_DRIVER = "org.h2.Driver";   
-	 static final String DB_URL = "jdbc:h2:~/serverDB";
+	 static final String DB_URL = "jdbc:h2:mem:serverDB";
 	 
 	 //  Database credentials 
 	 static final String USER = "sa"; 
@@ -41,14 +41,18 @@ public class MsgSSLServerSocket {
 			System.out.println("Connecting to database...");
 			conn = DriverManager.getConnection(DB_URL,USER,PASS);
 
-			System.out.println("Creating table in given database if not exists...");
+			System.out.println("Creating table in given database...");
 			stmt = conn.createStatement();
-			String sql =  "CREATE TABLE IF NOT EXISTS MESSAGES " +
-							"(id INTEGER not NULL, " +
-							" message VARCHAR(255), " + 
-							" username VARCHAR(255), " +
-							" PRIMARY KEY ( id ))";
-			stmt.executeUpdate(sql);
+
+			String dropTable = "DROP TABLE IF EXISTS MESSAGES";
+			stmt.executeUpdate(dropTable);
+
+			String createTable =  "CREATE TABLE MESSAGES " +
+								  "(id INTEGER AUTO_INCREMENT, " +
+								  " message VARCHAR(255), " + 
+								  " username VARCHAR(255), " +
+								  " PRIMARY KEY ( id ))";
+			stmt.executeUpdate(createTable);
 
 			System.out.println("Created table in given database...");
 		
@@ -67,7 +71,7 @@ public class MsgSSLServerSocket {
 				PrintWriter output = new PrintWriter(new OutputStreamWriter(socket.getOutputStream()));
 				if (username.equals(correcUsername) && password.equals(correctPassword)) {
 					// save to database
-					sql = "INSERT INTO MESSAGES (message, username) VALUES ('" + message + "', '" + username + "')";
+					String sql = "INSERT INTO MESSAGES (message, username) VALUES ('" + message + "', '" + username + "')";
 					stmt.executeUpdate(sql);
 					output.println("Welcome to the Server. Your message has been saved.");
 					

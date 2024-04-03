@@ -2,4 +2,4 @@
 
 javac client/MsgSSLClientSocket.java
 
-java -Djavax.net.ssl.trustStore=~/SSLStore/keystore.jks -Djavax.net.ssl.trustStorePassword=ciberheroes client.MsgSSLClientSocket
+java -Djavax.net.ssl.trustStore=$HOME/SSLStore/keystore.jks -Djavax.net.ssl.trustStorePassword=ciberheroes client.MsgSSLClientSocket
