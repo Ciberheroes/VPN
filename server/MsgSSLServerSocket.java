@@ -5,6 +5,10 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import javax.net.ssl.*;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
+import java.sql.Statement;
 
 public class MsgSSLServerSocket {
 	/**
@@ -12,16 +16,33 @@ public class MsgSSLServerSocket {
 	 * @throws IOException
 	 * @throws InterruptedException
 	 */
-	public static void main(String[] args) throws IOException, InterruptedException {
-		
+
+	 // JDBC driver name and database URL 
+	 static final String JDBC_DRIVER = "org.h2.Driver";   
+	 static final String DB_URL = "jdbc:h2:~/test";  
+	 
+	 //  Database credentials 
+	 static final String USER = "sa"; 
+	 static final String PASS = ""; 
+
+	public static void main(String[] args) throws IOException, InterruptedException, SQLException, ClassNotFoundException{
+
+		Connection conn = null; 
+      	Statement stmt = null; 
+
 		String correcUsername = "practica";
 		String correctPassword = "cf22a8a09367f9802e640e691a7a756087bb16e9344f20c38e6fd8ebcc5ec335";
+
 		try {
 			SSLServerSocketFactory factory = (SSLServerSocketFactory) SSLServerSocketFactory.getDefault();
 			SSLServerSocket serverSocket = (SSLServerSocket) factory.createServerSocket(3343);
+
+			Class.forName(JDBC_DRIVER);
+			System.out.println("Connecting to database...");
+			conn = DriverManager.getConnection("jdbc:h2:~/test", "sa", "");
+
 		
 			// wait for client connection and check login information
-			
 			System.err.println("Waiting for connection...");
 
 			while (true) {
