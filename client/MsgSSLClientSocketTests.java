@@ -5,11 +5,6 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import javax.net.ssl.*;
-import javax.swing.BoxLayout;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JPasswordField;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.time.LocalDateTime;
@@ -22,7 +17,7 @@ public class MsgSSLClientSocketTests {
 	 * @throws IOException
 	 */
 	public static void main(String[] args) throws IOException {
-		int numOperaciones = 2;
+		int numOperaciones = 300;
 		Thread[] hilos = new Thread[numOperaciones];
 
 		LocalDateTime startTime = LocalDateTime.now();
@@ -47,7 +42,7 @@ public class MsgSSLClientSocketTests {
                 e.printStackTrace();
             }
         }
-		System.out.println("El proceso ha terminado en " + Duration.between(startTime, LocalDateTime.now()) + " milisegundos.");
+		System.out.println("El proceso ha terminado");
 	}
 
 	public static void sendMessage(String user, String pass, String message){
@@ -81,11 +76,6 @@ public class MsgSSLClientSocketTests {
 			output.println(pass);
 			output.println(message);
 			output.flush();
-
-			
-			String response = input.readLine();
-
-			System.out.println(response);
 				
 			output.close();
 			input.close();

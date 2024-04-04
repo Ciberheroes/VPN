@@ -32,9 +32,6 @@ public class MsgSSLServerSocket {
 	public static void main(String[] args)
 			throws IOException, InterruptedException, SQLException, ClassNotFoundException {
 
-		Connection conn = null;
-		Statement stmt = null;
-
 		String correcUsername = "practica";
 		String correctPassword = "cf22a8a09367f9802e640e691a7a756087bb16e9344f20c38e6fd8ebcc5ec335";
 
@@ -44,10 +41,10 @@ public class MsgSSLServerSocket {
 
 			Class.forName(JDBC_DRIVER);
 			System.out.println("Connecting to database...");
-			conn = DriverManager.getConnection(DB_URL, USER, PASS);
+			final Connection conn = DriverManager.getConnection(DB_URL, USER, PASS);
 
 			System.out.println("Creating tables in given database...");
-			stmt = conn.createStatement();
+			Statement stmt = conn.createStatement();
 
 			String dropMessagesTable = "DROP TABLE IF EXISTS MESSAGES";
 			stmt.executeUpdate(dropMessagesTable);
@@ -100,26 +97,26 @@ public class MsgSSLServerSocket {
 							String password = input.readLine();
 							String message = input.readLine();
 
-							Connection threadConnection = DriverManager.getConnection(DB_URL, USER, PASS);
-							Statement threadStmt = threadConnection.createStatement();
+							Statement threadStatement = conn.createStatement();
 
 							// open PrintWriter for writing data to client
 							PrintWriter output = new PrintWriter(new OutputStreamWriter(socket.getOutputStream()), true);
-							if (threadStmt.executeQuery("SELECT username FROM USERS WHERE username = '"
+							if (threadStatement.executeQuery("SELECT username FROM USERS WHERE username = '"
 									+ String.valueOf(username) + "' AND password = '" + String.valueOf(password) + "'")
 									.next()) {
 								String sql = "INSERT INTO MESSAGES (message, username) VALUES ('" + message + "', '"
 										+ username + "')";
-								threadStmt.executeUpdate(sql);
+								threadStatement.executeUpdate(sql);
 								output.println("Welcome to the Server. Your message has been saved.");
 								System.out.println("Message saved from " + username + ": " + message);
 
 								// close everything
-								output.close();
-								input.close();
-								threadConnection.close();
-								threadStmt.close();
-								socket.close();
+								if (input != null)
+									input.close();
+								if (output != null)
+									output.close();
+								if (socket != null)
+									socket.close();
 							} else {
 								output.println("Incorrect credentials.");
 								System.out.println("Incorrect credentials from " + username);
