@@ -118,6 +118,8 @@ public class MsgSSLServerSocket {
 								output.close();
 								input.close();
 								threadConnection.close();
+								threadStmt.close();
+								socket.close();
 							} else {
 								output.println("Incorrect credentials.");
 								System.out.println("Incorrect credentials from " + username);
