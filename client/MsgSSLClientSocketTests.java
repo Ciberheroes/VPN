@@ -18,6 +18,7 @@ public class MsgSSLClientSocketTests {
 	 * @param args
 	 * @throws IOException
 	 */
+	
 	public static void main(String[] args) throws IOException {
 
 		loadEnvVariables();
@@ -54,14 +55,10 @@ public class MsgSSLClientSocketTests {
 			
 			SSLSocketFactory factory = (SSLSocketFactory) SSLSocketFactory.getDefault();
 			SSLSocket socket = (SSLSocket) factory.createSocket(System.getProperty("SERVER_URL"), Integer.valueOf(System.getProperty("SERVER_PORT")));
-			//SSLSocket socket = (SSLSocket) factory.createSocket("192.168.100.30", 3343);
 
-			// create BufferedReader for reading server response
 			BufferedReader input = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 
-			// create PrintWriter for sending login to server
 			PrintWriter output = new PrintWriter(new OutputStreamWriter(socket.getOutputStream()));
-			// prompt user for user name
 			
 			try {
 				MessageDigest digest = MessageDigest.getInstance("SHA-256");
@@ -80,7 +77,6 @@ public class MsgSSLClientSocketTests {
 			output.println(pass);
 			output.println(message);
 			output.flush();
-				
 			
 		} 
 

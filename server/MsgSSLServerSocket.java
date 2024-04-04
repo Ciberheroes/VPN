@@ -30,11 +30,8 @@ public class MsgSSLServerSocket {
 
 		loadEnvVariables();
 
-		// JDBC driver name and database URL
 		final String JDBC_DRIVER = System.getProperty("JDBC_DRIVER");
 		final String DB_URL = System.getProperty("DB_URL");
-
-		// Database credentials
 		final String USER = System.getProperty("DB_USER");
 		final String PASS = System.getProperty("DB_PASSWORD");
 
@@ -93,7 +90,6 @@ public class MsgSSLServerSocket {
 					"INSERT INTO USERS (username, password) VALUES ('"+correcUsername+"', '"+correctPassword+"')");
 			System.out.println("Created tables in given database...");
 
-			// wait for client connection and check login information
 			System.err.println("Waiting for connection...");
 			ExecutorService threadPool = Executors.newFixedThreadPool(400);
 			while (true) {
@@ -101,7 +97,6 @@ public class MsgSSLServerSocket {
 					final SSLSocket socket = (SSLSocket) serverSocket.accept();
 					threadPool.execute(() -> {
 						try {
-							// open BufferedReader for reading data from client
 							BufferedReader input = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 							String username = input.readLine();
 							String password = input.readLine();
@@ -109,7 +104,6 @@ public class MsgSSLServerSocket {
 
 							Statement threadStatement = conn.createStatement();
 
-							// open PrintWriter for writing data to client
 							PrintWriter output = new PrintWriter(new OutputStreamWriter(socket.getOutputStream()), true);
 							if (threadStatement.executeQuery("SELECT username FROM USERS WHERE username = '"
 									+ String.valueOf(username) + "' AND password = '" + String.valueOf(password) + "'")
@@ -120,7 +114,6 @@ public class MsgSSLServerSocket {
 								output.println("Welcome to the Server. Your message has been saved.");
 								System.out.println("Message saved from " + username + ": " + message);
 
-								// close everything
 								if (input != null)
 									input.close();
 								if (output != null)
@@ -144,6 +137,7 @@ public class MsgSSLServerSocket {
 			System.err.println("Error: " + e.getMessage());
 		}
 	}
+
 	private static void loadEnvVariables() {
         try {
             File file = new File(System.getProperty("user.dir")+"\\server"+"\\"+".properties");

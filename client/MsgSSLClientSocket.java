@@ -23,6 +23,7 @@ public class MsgSSLClientSocket {
 	 * @param args
 	 * @throws IOException
 	 */
+
 	public static void main(String[] args) throws IOException {
 
 		loadEnvVariables();
@@ -34,19 +35,16 @@ public class MsgSSLClientSocket {
 			SSLSocketFactory factory = (SSLSocketFactory) SSLSocketFactory.getDefault();
 			SSLSocket socket = (SSLSocket) factory.createSocket(SERVER_URL, SERVER_PORT);
 			
-			// create BufferedReader for reading server response
 			BufferedReader input = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 
-			// create PrintWriter for sending login to server
 			PrintWriter output = new PrintWriter(new OutputStreamWriter(socket.getOutputStream()));
-			// prompt user for user name
+
 			String user = JOptionPane.showInputDialog(null, "Enter a user:");
 			
 			JPasswordField passwordField = new JPasswordField();
-        
-			// Creamos un panel para el cuadro de diálogo
+
 			JPanel panel = new JPanel();
-			panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS)); // Cambiamos el LayoutManager a BoxLayout
+			panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
 
 			JLabel label = new JLabel("Enter a password:");
 			panel.add(label);
@@ -55,11 +53,9 @@ public class MsgSSLClientSocket {
 			
 			JOptionPane.showConfirmDialog(null, panel, "Password Input", JOptionPane.OK_CANCEL_OPTION);
 			String message = JOptionPane.showInputDialog(null, "Enter a message:");
-			
-			// Convertimos el valor del arreglo de caracteres a String
+
 			String pass = new String(passwordField.getPassword());
 
-			// Convert the password to a SHA-256 hash
 			try {
 			MessageDigest digest = MessageDigest.getInstance("SHA-256");
 			byte[] hashBytes = digest.digest(pass.getBytes());
@@ -82,24 +78,22 @@ public class MsgSSLClientSocket {
 		
 			JOptionPane.showMessageDialog(null, response);
 
-			
 			output.close();
 			input.close();
 			socket.close();
 
 		} 
 
-
 		catch (IOException ioException) {
 			ioException.printStackTrace();
 		}
-
 		
 		finally {
 			System.exit(0);
 		}
 
 	}
+	
 	private static void loadEnvVariables() {
         try {
             File file = new File(System.getProperty("user.dir")+"\\client"+"\\"+".properties");
