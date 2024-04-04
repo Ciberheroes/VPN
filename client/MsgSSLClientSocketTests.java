@@ -18,7 +18,7 @@ public class MsgSSLClientSocketTests {
 	 * @param args
 	 * @throws IOException
 	 */
-	
+
 	public static void main(String[] args) throws IOException {
 
 		loadEnvVariables();
@@ -27,7 +27,8 @@ public class MsgSSLClientSocketTests {
 		Thread[] hilos = new Thread[numOperaciones];
 		
 		LocalDateTime startTime = LocalDateTime.now();
-		
+		int satisfactoryPetitions = 0;
+
 		for (int i = 0; i < numOperaciones; i++) {
 			final String index = String.valueOf(i);
 			Runnable operacion = new Runnable() {
@@ -43,11 +44,13 @@ public class MsgSSLClientSocketTests {
 		for (Thread hilo : hilos) {
             try {
                 hilo.join();
+				satisfactoryPetitions++;
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
         }
-		System.out.println("El proceso ha terminado");
+		System.out.println("Tiempo total: "+Duration.between(startTime, LocalDateTime.now()).toMillis()+" ms");
+		System.out.println("Peticiones satisfactorias: "+satisfactoryPetitions);
 	}
 
 	public static void sendMessage(String user, String pass, String message){
