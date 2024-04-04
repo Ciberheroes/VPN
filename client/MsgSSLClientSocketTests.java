@@ -19,7 +19,7 @@ public class MsgSSLClientSocketTests {
 	public static void main(String[] args) throws IOException {
 		int numOperaciones = 300;
 		Thread[] hilos = new Thread[numOperaciones];
-
+		
 		LocalDateTime startTime = LocalDateTime.now();
 		
 		for (int i = 0; i < numOperaciones; i++) {
@@ -28,7 +28,6 @@ public class MsgSSLClientSocketTests {
 				@Override
 				public void run() {
 					sendMessage(index,index,"Mensaje de prueba "+index);
-					System.out.println("Operación " + index + " ejecutándose...");
 				}
 			};
 			hilos[i] = new Thread(operacion);
@@ -77,18 +76,14 @@ public class MsgSSLClientSocketTests {
 			output.println(message);
 			output.flush();
 				
-			output.close();
-			input.close();
-			socket.close();
+			
 		} 
 
 
 		catch (IOException ioException) {
-			ioException.printStackTrace();
+			sendMessage(user,pass, message);
 		}
 		
-		finally {
-			System.exit(0);
-		}
+		
 	}
 }

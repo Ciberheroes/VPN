@@ -13,6 +13,8 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class MsgSSLServerSocket {
 	/**
@@ -38,6 +40,10 @@ public class MsgSSLServerSocket {
 		try {
 			SSLServerSocketFactory factory = (SSLServerSocketFactory) SSLServerSocketFactory.getDefault();
 			SSLServerSocket serverSocket = (SSLServerSocket) factory.createServerSocket(3343);
+			SSLParameters sslParameters = new SSLParameters();
+			String[] enabledCipherSuites = {"TLS_AES_128_GCM_SHA256", "TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384"};
+            sslParameters.setCipherSuites(enabledCipherSuites);
+			serverSocket.setSSLParameters(sslParameters);
 
 			Class.forName(JDBC_DRIVER);
 			System.out.println("Connecting to database...");
@@ -85,11 +91,11 @@ public class MsgSSLServerSocket {
 
 			// wait for client connection and check login information
 			System.err.println("Waiting for connection...");
-
+			ExecutorService threadPool = Executors.newFixedThreadPool(400);
 			while (true) {
 				try {
 					final SSLSocket socket = (SSLSocket) serverSocket.accept();
-					new Thread(() -> {
+					threadPool.execute(() -> {
 						try {
 							// open BufferedReader for reading data from client
 							BufferedReader input = new BufferedReader(new InputStreamReader(socket.getInputStream()));
@@ -125,7 +131,7 @@ public class MsgSSLServerSocket {
 						} catch (IOException | SQLException e) {
 							System.err.println("Error: " + e.getMessage());
 						}
-					}).start();
+					});
 				} catch (IOException e) {
 					System.err.println("Error: " + e.getMessage());
 				}
