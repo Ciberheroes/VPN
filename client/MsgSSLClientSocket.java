@@ -1,5 +1,7 @@
 package client;
 import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
@@ -22,11 +24,15 @@ public class MsgSSLClientSocket {
 	 * @throws IOException
 	 */
 	public static void main(String[] args) throws IOException {
+
+		loadEnvVariables();
+		String SERVER_URL = System.getProperty("SERVER_URL");
+		Integer SERVER_PORT = Integer.valueOf(System.getProperty("SERVER_PORT"));
+
 		try {
 			
 			SSLSocketFactory factory = (SSLSocketFactory) SSLSocketFactory.getDefault();
-			SSLSocket socket = (SSLSocket) factory.createSocket("localhost", 3343);
-			//SSLSocket socket = (SSLSocket) factory.createSocket("192.168.100.30", 3343);
+			SSLSocket socket = (SSLSocket) factory.createSocket(SERVER_URL, SERVER_PORT);
 			
 			// create BufferedReader for reading server response
 			BufferedReader input = new BufferedReader(new InputStreamReader(socket.getInputStream()));
@@ -94,4 +100,23 @@ public class MsgSSLClientSocket {
 		}
 
 	}
+	private static void loadEnvVariables() {
+        try {
+            File file = new File(System.getProperty("user.dir")+"\\client"+"\\"+".properties");
+            FileInputStream fis = new FileInputStream(file);
+            BufferedReader br = new BufferedReader(new InputStreamReader(fis));
+            String line;
+            while ((line = br.readLine()) != null) {
+                String[] parts = line.split("=", 2);
+                if (parts.length == 2) {
+                    String key = parts[0].trim();
+                    String value = parts[1].trim();
+                    System.setProperty(key, value);
+                }
+            }
+            br.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 }

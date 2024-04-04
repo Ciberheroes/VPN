@@ -1,5 +1,7 @@
 package client;
 import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
@@ -17,7 +19,10 @@ public class MsgSSLClientSocketTests {
 	 * @throws IOException
 	 */
 	public static void main(String[] args) throws IOException {
-		int numOperaciones = 300;
+
+		loadEnvVariables();
+		Integer numOperaciones = Integer.valueOf(System.getProperty("NUM_OPERACIONES"));
+
 		Thread[] hilos = new Thread[numOperaciones];
 		
 		LocalDateTime startTime = LocalDateTime.now();
@@ -48,7 +53,7 @@ public class MsgSSLClientSocketTests {
 		try {
 			
 			SSLSocketFactory factory = (SSLSocketFactory) SSLSocketFactory.getDefault();
-			SSLSocket socket = (SSLSocket) factory.createSocket("localhost", 3343);
+			SSLSocket socket = (SSLSocket) factory.createSocket(System.getProperty("SERVER_URL"), Integer.valueOf(System.getProperty("SERVER_PORT")));
 			//SSLSocket socket = (SSLSocket) factory.createSocket("192.168.100.30", 3343);
 
 			// create BufferedReader for reading server response
@@ -83,7 +88,25 @@ public class MsgSSLClientSocketTests {
 		catch (IOException ioException) {
 			sendMessage(user,pass, message);
 		}
-		
-		
 	}
+
+	private static void loadEnvVariables() {
+        try {
+            File file = new File(System.getProperty("user.dir")+"\\client"+"\\"+".properties");
+            FileInputStream fis = new FileInputStream(file);
+            BufferedReader br = new BufferedReader(new InputStreamReader(fis));
+            String line;
+            while ((line = br.readLine()) != null) {
+                String[] parts = line.split("=", 2);
+                if (parts.length == 2) {
+                    String key = parts[0].trim();
+                    String value = parts[1].trim();
+                    System.setProperty(key, value);
+                }
+            }
+            br.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 }

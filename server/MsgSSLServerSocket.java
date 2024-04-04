@@ -1,6 +1,8 @@
 package server;
 
 import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
@@ -16,32 +18,34 @@ import java.sql.Statement;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+
 public class MsgSSLServerSocket {
 	/**
 	 * @param args
 	 * @throws IOException
 	 * @throws InterruptedException
 	 */
-
-	// JDBC driver name and database URL
-	static final String JDBC_DRIVER = "org.h2.Driver";
-	static final String DB_URL = "jdbc:h2:tcp://localhost/~/serverDB";
-
-	// Database credentials
-	static final String USER = "sa";
-	static final String PASS = "";
-
 	public static void main(String[] args)
 			throws IOException, InterruptedException, SQLException, ClassNotFoundException {
+
+		loadEnvVariables();
+
+		// JDBC driver name and database URL
+		final String JDBC_DRIVER = System.getProperty("JDBC_DRIVER");
+		final String DB_URL = System.getProperty("DB_URL");
+
+		// Database credentials
+		final String USER = System.getProperty("DB_USER");
+		final String PASS = System.getProperty("DB_PASSWORD");
 
 		String correcUsername = "practica";
 		String correctPassword = "cf22a8a09367f9802e640e691a7a756087bb16e9344f20c38e6fd8ebcc5ec335";
 
 		try {
 			SSLServerSocketFactory factory = (SSLServerSocketFactory) SSLServerSocketFactory.getDefault();
-			SSLServerSocket serverSocket = (SSLServerSocket) factory.createServerSocket(3343);
+			SSLServerSocket serverSocket = (SSLServerSocket) factory.createServerSocket(Integer.valueOf(System.getProperty("PORT")));
 			SSLParameters sslParameters = new SSLParameters();
-			String[] enabledCipherSuites = {"TLS_AES_128_GCM_SHA256", "TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384"};
+			String[] enabledCipherSuites = System.getProperty("ENABLED_CIPHER_SUITES").split(",");
             sslParameters.setCipherSuites(enabledCipherSuites);
 			serverSocket.setSSLParameters(sslParameters);
 
@@ -140,4 +144,23 @@ public class MsgSSLServerSocket {
 			System.err.println("Error: " + e.getMessage());
 		}
 	}
+	private static void loadEnvVariables() {
+        try {
+            File file = new File(System.getProperty("user.dir")+"\\server"+"\\"+".properties");
+            FileInputStream fis = new FileInputStream(file);
+            BufferedReader br = new BufferedReader(new InputStreamReader(fis));
+            String line;
+            while ((line = br.readLine()) != null) {
+                String[] parts = line.split("=", 2);
+                if (parts.length == 2) {
+                    String key = parts[0].trim();
+                    String value = parts[1].trim();
+                    System.setProperty(key, value);
+                }
+            }
+            br.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 }
