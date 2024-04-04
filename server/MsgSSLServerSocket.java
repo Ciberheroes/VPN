@@ -83,7 +83,7 @@ public class MsgSSLServerSocket {
 				stmt.executeUpdate("INSERT INTO USERS (username, password) VALUES ('" + i + "', '" + pass + "')");
 			}
 			stmt.executeUpdate(
-					"INSERT INTO USERS (username, password) VALUES ('practica', 'cf22a8a09367f9802e640e691a7a756087bb16e9344f20c38e6fd8ebcc5ec335')");
+					"INSERT INTO USERS (username, password) VALUES ('"+correcUsername+"', '"+correctPassword+"')");
 			System.out.println("Created tables in given database...");
 
 			// wait for client connection and check login information
