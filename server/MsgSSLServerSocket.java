@@ -100,22 +100,31 @@ public class MsgSSLServerSocket {
 							String password = input.readLine();
 							String message = input.readLine();
 
+							Connection threadConnection = DriverManager.getConnection(DB_URL, USER, PASS);
+							Statement threadStmt = threadConnection.createStatement();
+
 							// open PrintWriter for writing data to client
-							PrintWriter output = new PrintWriter(new OutputStreamWriter(socket.getOutputStream()));
-							if (stmt.executeQuery("SELECT username FROM USERS WHERE username = '"
+							PrintWriter output = new PrintWriter(new OutputStreamWriter(socket.getOutputStream()), true);
+							if (threadStmt.executeQuery("SELECT username FROM USERS WHERE username = '"
 									+ String.valueOf(username) + "' AND password = '" + String.valueOf(password) + "'")
 									.next()) {
 								String sql = "INSERT INTO MESSAGES (message, username) VALUES ('" + message + "', '"
 										+ username + "')";
-								stmt.executeUpdate(sql);
+								threadStmt.executeUpdate(sql);
 								output.println("Welcome to the Server. Your message has been saved.");
+								System.out.println("Message saved from " + username + ": " + message);
+
+								// close everything
+								output.close();
+								input.close();
+								threadConnection.close();
 							} else {
 								output.println("Incorrect credentials.");
+								System.out.println("Incorrect credentials from " + username);
 							}
 
 						} catch (IOException | SQLException e) {
 							System.err.println("Error: " + e.getMessage());
-
 						}
 					}).start();
 				} catch (IOException e) {
@@ -124,9 +133,6 @@ public class MsgSSLServerSocket {
 			}
 		} catch (IOException e) {
 			System.err.println("Error: " + e.getMessage());
-			output.close();
-			input.close();
-			socket.close();
 		}
 	}
 }

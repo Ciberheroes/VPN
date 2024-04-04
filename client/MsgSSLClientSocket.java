@@ -71,11 +71,9 @@ public class MsgSSLClientSocket {
 			output.println(pass);
 			output.println(message);
 			output.flush();
-
 			
 			String response = input.readLine();
-
-			
+		
 			JOptionPane.showMessageDialog(null, response);
 
 			
